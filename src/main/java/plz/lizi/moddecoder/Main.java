@@ -17,22 +17,25 @@ public class Main {
 			cls();
 			println("* Mod Decoder by PLZLiZi *");
 			println();
-			println("- Working path : " + new File(".\\").getAbsolutePath());
-			println("- Command : dec (path to mod.jar) (path to extract folder) [-W] [-D]");
+			println("- Command : dec (path to mod.jar) (path to extract folder) [-W] [-D] [-I]");
 			println("- Command : ref (.tsrg file path or /MCVERSION)");
-			println("- Command : get (srg / mcp / sign -> line)");
-			println("- [] is optional content");
-			println("- [-W] auto generate src workspace");
-			println("- [-D] auto anti obfuscate for MINECRAFT SRG");
+			println("- Command : get (srg / mcp / sign -> srg line)");
+			println("- [] Is optional content");
+			println("- [-W] Auto generate src workspace");
+			println("- [-D] Auto anti obfuscate for MINECRAFT SRG");
+			println("- [-I] Display info during decompilation");
 			println();
-			String cmd = input("> ");
+			String path = new File(".").getAbsolutePath();
+			path = path.substring(0, path.length() - 2);
+			String cmd = input(path + "> ");
 			long millis = System.currentTimeMillis();
-			if (cmd.equals("exit") || cmd.equals("quit") || cmd.isEmpty())
+			if (cmd.equals("exit") || cmd.equals("quit"))
 				System.exit(0);
 			List<String> values = dumpCmdline(cmd);
-			if (values.get(0).equals("dec")) {
+			if (values.get(0).trim().toLowerCase().equals("dec")) {
 				boolean workspace = cmd.contains("-W");
 				boolean deobf = cmd.contains("-D");
+				boolean deubg = cmd.contains("-I");
 				if (deobf) {
 					try {
 						MCDeobfHelper.init("/1.20.1");
@@ -45,6 +48,7 @@ public class Main {
 					String to = values.get(2);
 					File jar = new File(from);
 					try {
+						ConsoleDecompiler.DEBUG = deubg;
 						ConsoleDecompiler.main(new String[] { from, to });
 						if (jar.isFile()) {
 							if (deobf) {
@@ -67,7 +71,7 @@ public class Main {
 					println("- Too few parameters");
 					println("- DECOMPILE FAILED in " + String.format("%.1f", (double) (System.currentTimeMillis() - millis) / 1000) + "s");
 				}
-			} else if (values.get(0).trim().equals("ref")) {
+			} else if (values.get(0).trim().toLowerCase().equals("ref")) {
 				if (values.size() >= 2 && !values.get(1).isEmpty()) {
 					try {
 						MCDeobfHelper.init(values.get(1));
@@ -80,7 +84,7 @@ public class Main {
 					println("- Refmap : " + MCDeobfHelper.REFMAP);
 				}
 
-			}else if (values.get(0).trim().equals("get") && values.size()>=2 && !values.get(1).isEmpty()) {
+			}else if (values.get(0).trim().toLowerCase().equals("get") && values.size()>=2 && !values.get(1).isEmpty()) {
 				
 			}
 			println();

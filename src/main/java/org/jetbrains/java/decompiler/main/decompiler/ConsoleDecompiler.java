@@ -20,6 +20,8 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 public class ConsoleDecompiler implements IBytecodeProvider, IResultSaver {
+	public static boolean DEBUG = false;
+
   @SuppressWarnings("UseOfSystemOutOrSystemErr")
   public static void main(String[] args) {
     if (args.length < 2) {
@@ -75,7 +77,7 @@ public class ConsoleDecompiler implements IBytecodeProvider, IResultSaver {
       return;
     }
 
-    PrintStreamLogger logger = new PrintStreamLogger(System.out);
+    PrintStreamLogger logger = !DEBUG ? new EmptyLogger(System.out) : new PrintStreamLogger(System.out);
     ConsoleDecompiler decompiler = new ConsoleDecompiler(destination, mapOptions, logger);
 
     for (File library : libraries) {
